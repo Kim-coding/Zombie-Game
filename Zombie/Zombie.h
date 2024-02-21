@@ -8,7 +8,7 @@ public:
 	enum class Types   //좀비 종류
 	{
 		Bloater,
-		Chase,
+		Chaser,
 		Crawler,
 	};
 	static const int TotalTypes = 3;   //좀비 수?
@@ -26,10 +26,6 @@ protected:
 	
 	Player* player;                     //좀비가 플레이어를 추적할 수 있도록
 
-	sf::Vector2f direction;  //방향 벡터
-	sf::Vector2f look;       //회전 벡터
-
-
 	Zombie(const std::string& name = "");
 
 public:
@@ -40,7 +36,6 @@ public:
 	void Reset()override;
 	void Update(float dt)override;
 	void Draw(sf::RenderWindow& window)override;
-
 
 };
 

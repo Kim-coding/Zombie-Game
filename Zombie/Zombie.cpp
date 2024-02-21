@@ -16,8 +16,8 @@ Zombie* Zombie::Create(Types ZombieType)
 		zombie->speed = 100;
 
 		break;
-	case Zombie::Types::Chase:
-		zombie->textureId = "graphics/chase.png";
+	case Zombie::Types::Chaser:
+		zombie->textureId = "graphics/chaser.png";
 		zombie->maxHp = 70;
 		zombie->speed = 75;
 
@@ -64,20 +64,22 @@ void Zombie::Update(float dt)
 {
 	SpriteGo::Update(dt);
 
-	sf::Vector2i playerpos = (sf::Vector2i)player->GetPosition();
-	sf::Vector2f playerWorldPos = SCENE_MGR.GetCurrentScene()->ScreenToWorld(playerpos);
-
-	look = playerWorldPos - position;
-	Utils::Normalize(look);
-
-	float angle = Utils::Angle(look);
-	sprite.setRotation(angle);
+	sf::Vector2f playerpos = player->GetPosition() - position;
+	SetRotation(Utils::Angle(playerpos));
+	Translate(Utils::GetNormal(playerpos) * speed * dt);
 
 
+	//SetPosition( position + direction * speed * dt);
 
+	//sf::Vector2f direction = player->GetPosition() - position;
+	//Utils::Normalize(direction);
+	//Translate(direction * speed * dt);
+	//SetRotation(Utils::Angle(direction));
 }
 
 void Zombie::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
 }
+
+

@@ -84,7 +84,7 @@ void Utils::Normalize( sf::Vector2f& vec)                 //1, -1·Î ¸¸µé¾î ÁÜ, ¹
 	float mag = Magnitude(vec);
 	if (mag != 0.f)
 	{
-		vec / mag;
+		vec /= mag;
 	}
 
 }
