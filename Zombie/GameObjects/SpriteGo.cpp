@@ -25,6 +25,11 @@ void SpriteGo::Translate(const sf::Vector2f& delta)
 	sprite.setPosition(position);
 }
 
+void SpriteGo::SetRotation(float r)
+{
+	GameObject::SetRotation(r);
+}
+
 void SpriteGo::SetOrigin(Origins preset)
 {
 	if (preset == Origins::Custom)

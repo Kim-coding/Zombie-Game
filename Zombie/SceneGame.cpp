@@ -32,6 +32,8 @@ void SceneGame::Enter()
 
 	TileMap* tileMap = dynamic_cast<TileMap*>(FindGo("Background"));
 	tileMap->SetPosition(centerPos);
+	tileMap->SetOrigin(Origins::MC);
+	//tileMap->SetScale({2.f, 2.f}); //타일 스케일 2배
 
 	player->SetPosition(centerPos);
 }

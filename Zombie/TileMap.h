@@ -13,17 +13,20 @@ protected:
 	sf::Vector2f cellCount;    
 	sf::Vector2f cellSize;     
 
+	sf::Transform transfrom;                //Transform변환을 표현하는 클래스// 스케일, 로테이션, 이동에 대한 변화를 나타내고 있는 것이다.
 public:
 	TileMap(const std::string& name = "");
 
 	void SetSpriteSheetId(const std::string& id);
-
 	void Set(const sf::Vector2f& count, const sf::Vector2f& size);
+	void UpdateTransform();
 
 	void SetOrigin(Origins preset) override;
 	void SetOrigin(const sf::Vector2f& newOrigin) override;
 
 	void SetPosition(const sf::Vector2f& pos) override;
+
+	void transLate(const sf::Vector2f& delta);
 
 	void SetScale(const sf::Vector2f& scale) override;
 
@@ -39,6 +42,7 @@ public:
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
 
+	void SetRotation(float r)override;
 
 };
 

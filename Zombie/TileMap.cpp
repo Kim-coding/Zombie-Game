@@ -44,7 +44,7 @@ void TileMap::Set(const sf::Vector2f& count, const sf::Vector2f& size)
 
 			int quadIndex = i * count.x + j;                   //사각형 인덱스    // 2차원 배열을 1차원으로 변경하는 과정이 필요하다
 			
-			sf::Vector2f quadPos(position.x + size.x * j, position.y + size.y * i);
+			sf::Vector2f quadPos(/*position.x + */size.x * j, /*position.y + */size.y * i);
 
 			for (int k = 0; k < 4; ++k)                        //정점 세팅
 			{
@@ -67,62 +67,74 @@ void TileMap::SetOrigin(Origins preset)
 {
 	if (preset == Origins::Custom)
 		return;
-
-	sf::FloatRect bound = va.getBounds();
-	sf::Vector2f newOrigin(bound.width, bound.height);
-	newOrigin.x *= ((int)preset % 3) * 0.5f;
-	newOrigin.y *= ((int)preset / 3) * 0.5f;
-
-	for (int i = 0; i < va.getVertexCount(); ++i)
-	{
-		va[i].position -= newOrigin;
-	}
-	
-	/*va.getBounds();*/
-
-	/*if (preset == Origins::Custom)
-	{
-		preset = Origins::MC;
-	}
 	originPreset = preset;
-	origin ={ 0, 0 };*/
-	
+	sf::FloatRect bound = va.getBounds();
+	origin.x = bound.width * ((int)preset % 3) * 0.5f;
+	origin.y = bound.height * ((int)preset / 3) * 0.5f;
+
+	UpdateTransform();
 }
 
 void TileMap::SetOrigin(const sf::Vector2f& newOrigin)
 {
+	originPreset = Origins::Custom;
+	origin = newOrigin;
+	UpdateTransform();
+}
 
+void TileMap::UpdateTransform()
+{
+	transfrom = sf::Transform::Identity;
+
+	float scaleX = isFlipX ? -scale.x : scale.x;
+	float scaleY = isFlipY ? -scale.y : scale.y;
+	transfrom.scale(scaleX, scaleY, position.x , position.y);
+	//transfrom.rotate();
+	transfrom.translate(position - origin);
 }
 
 void TileMap::SetPosition(const sf::Vector2f& pos)    //이동한 만큼 타일도 이동
 {
-	sf::Vector2f delta = pos - position;
+	/*sf::Vector2f delta = pos - position;
 	for (int i = 0; i < va.getVertexCount(); ++i)
 	{
 		va[i].position += delta;
 	}
-	position = pos;
+	position = pos;*/
+	GameObject::SetPosition(pos);
+	UpdateTransform();
+}
+
+void TileMap::transLate(const sf::Vector2f& delta)
+{
+	GameObject::Translate(delta);
+	UpdateTransform();
 }
 
 void TileMap::SetScale(const sf::Vector2f& scale)
 {
+	GameObject::SetScale(scale);
+	UpdateTransform();
 }
 
 void TileMap::SetFlipX(bool flip)
 {
+	GameObject::SetFlipX(flip);
+	UpdateTransform();
 }
 
 void TileMap::SetFlipY(bool flip)
 {
+	GameObject::SetFlipY(flip);
+	UpdateTransform();
 }
 
 void TileMap::Init()
 {
 	GameObject::Init();
 	SetSpriteSheetId("graphics/background_sheet.png");
-
 	
-	Set({ 20, 20 }, { 50, 50 });
+	Set({ 10, 10 }, { 50, 50 });
 	SetOrigin(Origins::MC);
 }
 
@@ -143,6 +155,18 @@ void TileMap::Update(float dt)
 
 void TileMap::Draw(sf::RenderWindow& window)
 {
-	//GameObject::Draw(window);
-	window.draw(va, texture);
+	//window.draw(va, texture);
+	
+	sf::RenderStates state;
+	state.texture = texture;
+	state.transform = transfrom;
+
+	window.draw(va, state);
+
+}
+
+void TileMap::SetRotation(float r)
+{
+	GameObject::SetRotation(r);
+	UpdateTransform();
 }

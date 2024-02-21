@@ -38,6 +38,7 @@ void Player::Update(float dt)
 	float angle = Utils::Angle(look);          //각도
 	sprite.setRotation(angle);
 
+	//SetRotation(); //호출
 	//플레이어부터 마우스 포인터를 바라보는 방향과 각도
 
 	

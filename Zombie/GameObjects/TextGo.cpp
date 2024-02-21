@@ -39,6 +39,11 @@ void TextGo::Translate(const sf::Vector2f& delta)
 	text.setPosition(position);
 }
 
+void TextGo::SetRotation(float r)
+{
+	GameObject::SetRotation(r);
+}
+
 void TextGo::SetPosition(const sf::Vector2f& pos)
 {
 	position = pos;
