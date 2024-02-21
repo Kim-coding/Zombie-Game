@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SceneGame.h"
 #include "Player.h"
+#include "TileMap.h"
 
 SceneGame::SceneGame(SceneIds id)
 	:Scene(id)
@@ -9,6 +10,8 @@ SceneGame::SceneGame(SceneIds id)
 
 void SceneGame::Init()
 {
+	AddGo(new TileMap("Background"));
+
 	player = new Player("Player");
 	AddGo(player);
 
@@ -24,7 +27,13 @@ void SceneGame::Enter()
 {
 	Scene::Enter();
 
-	player->SetPosition({500.f, 500.f});
+	sf::Vector2f centerPos = (sf::Vector2f)FRAMEWORK.GetWindowSize() * 0.5f;
+
+
+	TileMap* tileMap = dynamic_cast<TileMap*>(FindGo("Background"));
+	tileMap->SetPosition(centerPos);
+
+	player->SetPosition(centerPos);
 }
 
 void SceneGame::Exit()

@@ -33,6 +33,12 @@ void TextGo::SetFont(const sf::Font& font)
 	text.setFont(font);
 }
 
+void TextGo::Translate(const sf::Vector2f& delta)
+{
+	position += delta;
+	text.setPosition(position);
+}
+
 void TextGo::SetPosition(const sf::Vector2f& pos)
 {
 	position = pos;

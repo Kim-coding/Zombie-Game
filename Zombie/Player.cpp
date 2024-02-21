@@ -40,27 +40,27 @@ void Player::Update(float dt)
 
 	//플레이어부터 마우스 포인터를 바라보는 방향과 각도
 
-	//
-	//direction.x = InputMgr::GetAxis(Axis::Horizontal);    //선생님 코드
-	//direction.y = InputMgr::GetAxis(Axis::Vertical);
+	
+	direction.x = InputMgr::GetAxis(Axis::Horizontal);    //선생님 코드
+	direction.y = InputMgr::GetAxis(Axis::Vertical);
 
-	//if (Utils::Magnitude(direction) > 1.f)
-	//{
-	//	Utils::Normalize(direction);
-	//}
-	//SetPosition(position + direction * speed * dt);
-	//
+	if (Utils::Magnitude(direction) > 1.f)
+	{
+		Utils::Normalize(direction);
+	}
+	SetPosition(position + direction * speed * dt);
+	//Translate(position + direction * speed * dt);        //위와 동일
 
 	
-	float h = InputMgr::GetAxis(Axis::Horizontal);        //내 코드
-	sf::Vector2f posX = sprite.getPosition();
-	posX.x += h * speed * dt;
-	SetPosition(posX);
+	//float h = InputMgr::GetAxis(Axis::Horizontal);        //내 코드
+	//sf::Vector2f posX = sprite.getPosition();
+	//posX.x += h * speed * dt;
+	//SetPosition(posX);
 
-	float v = InputMgr::GetAxis(Axis::Vertical);
-	sf::Vector2f posY = sprite.getPosition();
-	posY.y += v * speed * dt;
-	SetPosition(posY);
+	//float v = InputMgr::GetAxis(Axis::Vertical);
+	//sf::Vector2f posY = sprite.getPosition();
+	//posY.y += v * speed * dt;
+	//SetPosition(posY);
 	
 }
 
