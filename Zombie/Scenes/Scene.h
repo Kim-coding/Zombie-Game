@@ -2,19 +2,41 @@
 
 class GameObject;
 
+
+
 class Scene
 {
+public:
+	enum Layers
+	{
+		None = 0,
+		World = 1,                       //딱 한 비트만 1, 나머지는 0
+		Ui = 2,
+		Everything = 0xFFFFFFFF,         //모든 비트가 1
+	};
+
 protected:
 	SceneIds id;
+	
 	std::list<GameObject*> gameObjects;
+	std::list<GameObject*> uigameObjects;
+
+	sf::View worldView;
+	sf::View uiView;
 
 	ResourceMgr<sf::Texture>& texResMgr;
 	ResourceMgr<sf::Font>& fontResMgr;
 	ResourceMgr<sf::SoundBuffer>& soundResMgr;
 public:
 	Scene(SceneIds id);
-
 	virtual ~Scene() = default;
+
+	sf::Vector2f ScreenToWorld(sf::Vector2i screenPos);            //스크린 좌표를 월드 좌표로 변환
+	sf::Vector2i WorldToScreen(sf::Vector2f worldPos);
+	sf::Vector2f ScreenToUi(sf::Vector2i screenPos);
+	sf::Vector2i UiToScreen(sf::Vector2f UiPos);
+
+
 
 	virtual void Init();
 	virtual void Release();
@@ -25,10 +47,10 @@ public:
 	virtual void Update(float dt);
 	virtual void Draw(sf::RenderWindow& window);
 
-	virtual GameObject* FindGo(const std::string& name);
-	virtual int FindGoAll(const std::string& name, std::list<GameObject*>& list);
+	virtual GameObject* FindGo(const std::string& name, Layers layer = Layers::Everything);
+	virtual int FindGoAll(const std::string& name, std::list<GameObject*>& list, Layers layer = Layers::Everything);
 
-	virtual GameObject* AddGo(GameObject* obj);
+	virtual GameObject* AddGo(GameObject* obj, Layers layer = Layers::World);
 	virtual void RemoveGo(GameObject* obj);
 
 	Scene(const Scene&) = delete;

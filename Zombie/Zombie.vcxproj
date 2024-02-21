@@ -160,6 +160,7 @@
     <ClCompile Include="GameObjects\SpriteGo.cpp" />
     <ClCompile Include="GameObjects\TextGo.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Framework.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="GameObjects\SpriteGo.h" />
     <ClInclude Include="GameObjects\TextGo.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

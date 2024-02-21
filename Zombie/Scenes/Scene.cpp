@@ -9,9 +9,33 @@ Scene::Scene(SceneIds id) :
 {
 }
 
+sf::Vector2f Scene::ScreenToWorld(sf::Vector2i screenPos)
+{
+	return FRAMEWORK.GetWindow().mapPixelToCoords(screenPos, worldView);
+}
+
+sf::Vector2i Scene::WorldToScreen(sf::Vector2f worldPos)
+{
+	return FRAMEWORK.GetWindow().mapCoordsToPixel(worldPos, uiView);
+}
+
+sf::Vector2f Scene::ScreenToUi(sf::Vector2i screenPos)
+{
+	return FRAMEWORK.GetWindow().mapPixelToCoords(screenPos, uiView);
+}
+
+sf::Vector2i Scene::UiToScreen(sf::Vector2f UiPos)
+{
+	return FRAMEWORK.GetWindow().mapCoordsToPixel(UiPos, uiView);
+}
+
 void Scene::Init()
 {
 	for (auto obj : gameObjects)
+	{
+		obj->Init();
+	}
+	for (auto obj : uigameObjects)
 	{
 		obj->Init();
 	}
@@ -24,11 +48,21 @@ void Scene::Release()
 		delete obj;
 	}
 	gameObjects.clear();
+
+	for (auto obj : uigameObjects)
+	{
+		delete obj;
+	}
+	uigameObjects.clear();
 }
 
 void Scene::Enter()
 {
 	for (auto obj : gameObjects)
+	{
+		obj->Reset();
+	}
+	for (auto obj : uigameObjects)
 	{
 		obj->Reset();
 	}
@@ -43,10 +77,20 @@ void Scene::Update(float dt)
 			obj->Update(dt);
 		}
 	}
+	for (auto obj : uigameObjects)
+	{
+		if (obj->GetActive())
+		{
+			obj->Update(dt);
+		}
+	}
 }
 
 void Scene::Draw(sf::RenderWindow& window)
 {
+	const sf::View& saveView = window.getView();
+
+	window.setView(worldView);          //화면이 플레이어를 따라 가도록
 	for (auto obj : gameObjects)
 	{
 		if (obj->GetActive())
@@ -54,39 +98,88 @@ void Scene::Draw(sf::RenderWindow& window)
 			obj->Draw(window);
 		}
 	}
+
+	window.setView(uiView);
+	for (auto obj : uigameObjects)
+	{
+		if (obj->GetActive())
+		{
+			obj->Draw(window);
+		}
+	}
+
+	window.setView(saveView);           
 }
 
-GameObject* Scene::FindGo(const std::string& name)
+GameObject* Scene::FindGo(const std::string& name, Layers layer)
 {
-	for (auto obj : gameObjects)
+	if ((layer & Layers::World) == Layers::World)
 	{
-		if (obj->name == name)
+		for (auto obj : gameObjects)
 		{
-			return obj;
+			if (obj->name == name)
+			{
+				return obj;
+			}
+		}
+	}
+	if ((layer & Layers::Ui) == Layers::Ui)
+	{
+		for (auto obj : uigameObjects)
+		{
+			if (obj->name == name)
+			{
+				return obj;
+			}
 		}
 	}
 	return nullptr;
 }
 
-int Scene::FindGoAll(const std::string& name, std::list<GameObject*>& list)
+int Scene::FindGoAll(const std::string& name, std::list<GameObject*>& list, Layers layer)
 {
-	list.clear();
-	for (auto obj : gameObjects)
+	list.clear();                                     //리스트를 비워 새로 찾은 값을 넣어주기 위함
+	if ((layer & Layers::World) == Layers::World)
 	{
-		if (obj->name == name)
+		for (auto obj : gameObjects)
 		{
-			list.push_back(obj);
+			if (obj->name == name)
+			{
+				list.push_back(obj);
+			}
 		}
 	}
-	return list.size();
+	if ((layer & Layers::World) == Layers::World)
+	{
+		for (auto obj : uigameObjects)
+		{
+			if (obj->name == name)
+			{
+				list.push_back(obj);
+			}
+		}
+	}
+	return list.size();                               //찾은 값의 개수 리턴
 }
 
-GameObject* Scene::AddGo(GameObject* obj)
+GameObject* Scene::AddGo(GameObject* obj, Layers layer)
 {
-	if (std::find(gameObjects.begin(), gameObjects.end(), obj) == gameObjects.end())
+	if(layer == Layers::World)
+	{ 
+		if (std::find(gameObjects.begin(), gameObjects.end(), obj) == gameObjects.end())
+		{
+			gameObjects.push_back(obj);
+			return obj;
+		}
+	}
+	
+	if (layer == Layers::Ui)
 	{
-		gameObjects.push_back(obj);
-		return obj;
+		if (std::find(uigameObjects.begin(), uigameObjects.end(), obj) == uigameObjects.end())
+		{
+			uigameObjects.push_back(obj);
+			return obj;
+		}
 	}
 	return nullptr;
 }
@@ -94,4 +187,5 @@ GameObject* Scene::AddGo(GameObject* obj)
 void Scene::RemoveGo(GameObject* obj)
 {
 	gameObjects.remove(obj);
+	uigameObjects.remove(obj);
 }

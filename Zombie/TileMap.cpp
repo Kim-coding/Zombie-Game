@@ -23,7 +23,7 @@ void TileMap::Set(const sf::Vector2f& count, const sf::Vector2f& size)
 
 	};
 
-	sf::Vector2f texCoord0[4] = {                        
+	sf::Vector2f texCoord0[4] = {                        //이미지의 일부만 사용하기 위해 //지금 적혀 있는 것은 이미지의 제일 첫번째 칸
 		{ 0, 0 },
 		{ 50.f, 0 },
 		{ 50.f, 50.f },
@@ -31,26 +31,26 @@ void TileMap::Set(const sf::Vector2f& count, const sf::Vector2f& size)
 
 	};
 
-	for (int i = 0; i < count.y; ++i)                    
+	for (int i = 0; i < count.y; ++i)               //i는 열.     
 	{
-		for (int j = 0; j < count.x; ++j)                 
+		for (int j = 0; j < count.x; ++j)           //j는 횡.
 		{
 
 			int texIndex = Utils::RandomRange(0, 3);
 			if (i == 0 || i == count.y - 1 || j == 0 || j == count.x - 1)
 			{
-				texIndex = 3;                                  // 외각
+				texIndex = 3;                                  //
 			}
 
-			int quadIndex = i * count.x + j;                   //사각형 인덱스    // 2차원 배열을 1차원으로 변경하는 과정이 필요하다
+			int quadIndex = i * count.x + j;                   // 사각형 인덱스    // 2차원 배열을 1차원으로 변경하는 과정이 필요하다
 			
-			sf::Vector2f quadPos(/*position.x + */size.x * j, /*position.y + */size.y * i);
+			sf::Vector2f quadPos(size.x * j, size.y * i);
 
-			for (int k = 0; k < 4; ++k)                        //정점 세팅
+			for (int k = 0; k < 4; ++k)                        // 정점 세팅
 			{
 				int vertexIndex = (quadIndex * 4) + k;
-				va[vertexIndex].position = quadPos + posOffsets[k];
-				va[vertexIndex].texCoords = texCoord0[k];
+				va[vertexIndex].position = quadPos + posOffsets[k];   
+				va[vertexIndex].texCoords = texCoord0[k];          //texCoord를 사용하는 이유는 이미지의 일부를 가지고 오기 위함
 				va[vertexIndex].texCoords.y += texIndex * 50.f;
 			}
 		}
@@ -89,7 +89,7 @@ void TileMap::UpdateTransform()
 	float scaleX = isFlipX ? -scale.x : scale.x;
 	float scaleY = isFlipY ? -scale.y : scale.y;
 	transfrom.scale(scaleX, scaleY, position.x , position.y);
-	//transfrom.rotate();
+	transfrom.rotate(rotation,position);
 	transfrom.translate(position - origin);
 }
 
