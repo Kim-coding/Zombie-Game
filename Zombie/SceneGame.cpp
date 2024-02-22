@@ -26,8 +26,9 @@ void SceneGame::Init()
 	player = new Player("Player");
 	AddGo(player);
 
-//	AddGo(new TileMap("Background"));     //테스트 코드가 들어갈 부분
-
+	TileMap* tilemap = new TileMap("Background");
+	tilemap->sortLayer = -1.f;
+	AddGo(tilemap);
 
 	Scene::Init();
 }
@@ -71,15 +72,20 @@ void SceneGame::Update(float dt)
 
 	worldView.setCenter(player->GetPosition());
 
-	if (InputMgr::GetKeyDown(sf::Keyboard::Space))     //좀비 생성
+	if (InputMgr::GetKeyDown(sf::Keyboard::Space))
 	{
-		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0, Zombie::TotalTypes);
-		zombie = Zombie::Create(zombieType);
-		zombie->Init();
-		zombie->Reset();
-		zombie->SetPosition(Utils::RandomInUnitCircle() * 600.f);
-		
-		AddGo(zombie);
+		TileMap* tilemap = dynamic_cast<TileMap*>(FindGo("Background"));
+		tilemap->sortLayer = 1;
+		ResortGo(tilemap);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Enter))
+	{
+		Player* player = dynamic_cast<Player*>(FindGo("Player"));
+		player->sortLayer = 1;
+		ResortGo(player);
+		Zombie* zombie = dynamic_cast<Zombie*>(FindGo("Zombie"));
+		zombie->sortLayer = 1;
+		ResortGo(zombie);
 	}
 
 

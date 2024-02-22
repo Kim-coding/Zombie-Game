@@ -85,6 +85,26 @@ void Scene::Update(float dt)
 		}
 	}
 
+	for (auto obj : resortingGameObjects)
+	{
+		auto it = std::find(gameObjects.begin(), gameObjects.end(), obj);
+		if (it != gameObjects.end())
+		{
+			gameObjects.remove(obj);
+			AddGo(obj, Layers::World);
+			continue;
+		}
+
+		it = std::find(uigameObjects.begin(), uigameObjects.end(), obj);
+		if (it != uigameObjects.end())
+		{
+			uigameObjects.remove(obj);
+			AddGo(obj, Layers::Ui);
+			continue;
+		}
+	}
+	resortingGameObjects.clear();
+
 	for (auto obj : removeGameObjects)
 	{
 		gameObjects.remove(obj);
@@ -227,6 +247,11 @@ GameObject* Scene::AddGo(GameObject* obj, Layers layer)
 		return obj;
 	}
 	return nullptr;
+}
+
+void Scene::ResortGo(GameObject* obj)
+{
+	resortingGameObjects.push_back(obj);
 }
 
 void Scene::RemoveGo(GameObject* obj)
