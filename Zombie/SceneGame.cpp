@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "TileMap.h"
 #include "Zombie.h"
+#include "ZombieSpawner.h"
 
 SceneGame::SceneGame(SceneIds id)
 	:Scene(id)
@@ -13,8 +14,20 @@ void SceneGame::Init()
 {
 	AddGo(new TileMap("Background"));
 
+	spawners.push_back(new ZombieSpawner());
+	spawners.push_back(new ZombieSpawner());
+	
+	for (auto s : spawners)
+	{
+		s->SetPosition(Utils::RandomOnUnitCircle() * 250.f);
+		AddGo(s);
+	}
+
 	player = new Player("Player");
 	AddGo(player);
+
+//	AddGo(new TileMap("Background"));     //테스트 코드가 들어갈 부분
+
 
 	Scene::Init();
 }
@@ -54,7 +67,7 @@ void SceneGame::Exit()
 
 void SceneGame::Update(float dt)
 {
-	Scene::Update(dt);
+  	Scene::Update(dt);
 
 	worldView.setCenter(player->GetPosition());
 
@@ -69,29 +82,27 @@ void SceneGame::Update(float dt)
 		AddGo(zombie);
 	}
 
-	std::vector<GameObject*> removeZombies;      //좀비 객체들을 저장할 공간
-	for (auto obj : gameObjects)
-	{
-		Zombie* zombie = dynamic_cast<Zombie*>(obj);
-		if (zombie != nullptr)
-		{
-			float distance = Utils::Distance(player->GetPosition(), zombie->GetPosition());
-			if (distance <= 10.f)
-			{
-				removeZombies.push_back(zombie);           //player와 거리가 10이하인 것은 충돌된 것으로 삭제 대상
-			}
-		}
-	}
 
-	for (auto obj : removeZombies)
+	/*좀비 Scene클래스 에서 삭제되도록 만들었음*/
+	//std::vector<GameObject*> removeZombies;      //좀비 객체들을 저장할 공간
+	//for (auto obj : gameObjects)
+	//{
+	//	Zombie* zombie = dynamic_cast<Zombie*>(obj);
+	//	if (zombie != nullptr)
+	//	{
+	//		float distance = Utils::Distance(player->GetPosition(), zombie->GetPosition());
+	//		if (distance <= 10.f)
+	//		{
+	//			removeZombies.push_back(zombie);           //player와 거리가 10이하인 것은 충돌된 것으로 삭제 대상
+	//		}
+	//	}
+	//}
+
+	/*for (auto obj : removeZombies)
 	{
-		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), obj), gameObjects.end());
-		//removeZombies에 있는 obj를 gameObject에서 삭제하기 위함.
-		//std::remove() => obj와 같은 값을 찾아서 벡터의 끝으로 이동시킴.
-		//gameObjects.erase(, gameObjects.end()) => std::remove()에 의해 반환된 값부터 마지막값까지 제거.
-		//즉, 끝으로 이동된 모든 요소를 삭제.
+		RemoveGo(obj);
 		delete obj;
-	}
+	}*/
 
 
 	

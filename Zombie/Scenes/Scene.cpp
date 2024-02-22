@@ -84,10 +84,35 @@ void Scene::Update(float dt)
 			obj->Update(dt);
 		}
 	}
+
+	for (auto obj : removeGameObjects)
+	{
+		gameObjects.remove(obj);
+		uigameObjects.remove(obj);
+
+		delete obj;
+	}
+	removeGameObjects.clear();
 }
 
 void Scene::Draw(sf::RenderWindow& window)
 {
+	//gameObjects.sort([](auto a, auto b) {
+	//	if (a->sortLayer != b->sortLayer)
+	//	{
+	//	return a->sortLayer < b->sortLayer;
+	//	}
+	//	return a->sortOrder < b->sortOrder; 
+	//});
+
+	//uigameObjects.sort([](auto a, auto b) {                   //함수를 식으로 구현하는 것 : 람다식?이락 함
+	//	if (a->sortLayer != b->sortLayer)                     //이름 없는 함수
+	//	{
+	//		return a->sortLayer < b->sortLayer;
+	//	}
+	//	return a->sortOrder < b->sortOrder;
+	//});                                                        //이와 같은 것은 복잡도가 높음 N X logN
+
 	const sf::View& saveView = window.getView();
 
 	window.setView(worldView);          //화면이 플레이어를 따라 가도록
@@ -168,6 +193,16 @@ GameObject* Scene::AddGo(GameObject* obj, Layers layer)
 	{ 
 		if (std::find(gameObjects.begin(), gameObjects.end(), obj) == gameObjects.end())
 		{
+			auto it = gameObjects.begin();
+			while (it != gameObjects.end())
+			{
+				if (GameObject::CompareDrawOrder(obj, *it))
+				{
+					gameObjects.insert(it, obj);
+					return obj;
+				}
+				++it;
+			}
 			gameObjects.push_back(obj);
 			return obj;
 		}
@@ -177,15 +212,25 @@ GameObject* Scene::AddGo(GameObject* obj, Layers layer)
 	{
 		if (std::find(uigameObjects.begin(), uigameObjects.end(), obj) == uigameObjects.end())
 		{
-			uigameObjects.push_back(obj);
-			return obj;
+			auto it = uigameObjects.begin();
+			while (it != uigameObjects.end())
+			{
+				if (GameObject::CompareDrawOrder(obj, *it))
+				{
+					uigameObjects.insert(it, obj);
+					return obj;
+				}
+				++it;
+			}
 		}
+		uigameObjects.push_back(obj);
+		return obj;
 	}
 	return nullptr;
 }
 
 void Scene::RemoveGo(GameObject* obj)
-{
-	gameObjects.remove(obj);
-	uigameObjects.remove(obj);
+{	
+	//obj->SetActive(false);
+	removeGameObjects.push_back(obj);
 }

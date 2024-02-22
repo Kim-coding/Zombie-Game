@@ -18,6 +18,33 @@ public:
 	GameObject(const std::string& name = "");
 	virtual ~GameObject();
 
+	static bool CompareDrawOrder(const GameObject& lhs, const GameObject& rhs)   //정렬
+	{
+		if (lhs.sortLayer != rhs.sortLayer)
+		{
+			return lhs.sortLayer < rhs.sortLayer;
+		}
+		return lhs.sortLayer < rhs.sortOrder;
+	}
+
+	static bool CompareDrawOrder(const GameObject* lhs, const GameObject* rhs) // 정렬
+	{
+		if (lhs->sortLayer != rhs->sortLayer)
+		{
+			return lhs->sortLayer < rhs->sortLayer;
+		}
+		return lhs->sortLayer < rhs->sortOrder;
+	}
+
+	bool operator<(const GameObject& rhs)              //정렬
+	{
+		if (sortLayer != rhs.sortLayer)
+		{
+			return sortLayer < rhs.sortLayer;
+		}
+		return sortOrder < rhs.sortOrder;
+	}
+
 	bool GetActive() const { return active; }
 	virtual void SetActive(bool active) { this->active = active; }
 
@@ -55,7 +82,9 @@ public:
 	virtual void Draw(sf::RenderWindow& window);
 
 	std::string name = "";
-	int sortLayer = 0;
+	int sortLayer = 0;    //게임 오브젝트의 그리기 순서를 조절
 	int sortOrder = 0;
+
+
 };
 

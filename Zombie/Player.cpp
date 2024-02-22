@@ -30,7 +30,7 @@ void Player::Update(float dt)
 	sf::Vector2i mousePos = (sf::Vector2i)InputMgr::GetMousePos();                          // 스크린 좌표 월드 좌표로 만들어 줄 필요가 있음
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrentScene()->ScreenToWorld(mousePos);
 
-	std::cout << mouseWorldPos.x << "     " << mouseWorldPos.y << std::endl;  //TEST
+	//std::cout << mouseWorldPos.x << "     " << mouseWorldPos.y << std::endl;  //TEST
 
 	look = mouseWorldPos - position;
 	Utils::Normalize(look);        

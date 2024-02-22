@@ -64,17 +64,14 @@ void Zombie::Update(float dt)
 {
 	SpriteGo::Update(dt);
 
-	sf::Vector2f playerpos = player->GetPosition() - position;
-	SetRotation(Utils::Angle(playerpos));
-	Translate(Utils::GetNormal(playerpos) * speed * dt);
+	sf::Vector2f direction = player->GetPosition() - position;
+	SetRotation(Utils::Angle(direction));
+	Translate(Utils::GetNormal(direction) * speed * dt);
 
-
-	//SetPosition( position + direction * speed * dt);
-
-	//sf::Vector2f direction = player->GetPosition() - position;
-	//Utils::Normalize(direction);
-	//Translate(direction * speed * dt);
-	//SetRotation(Utils::Angle(direction));
+	//if (Utils::Distance(position, player->GetPosition()) < 50.f)  
+	//{
+	//	SCENE_MGR.GetCurrentScene()->RemoveGo(this);  //좀비 삭제 부분 RemoveGo에 조건에 맞는 좀비 객체 전달
+	//}
 }
 
 void Zombie::Draw(sf::RenderWindow& window)
